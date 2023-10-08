@@ -13,11 +13,13 @@ app.use(bodyParser.urlencoded({
 }));
 
 mongooes.connect("mongodb://127.0.0.1:27017/userDB");
-const userSchema = {
+const userSchema = new mongooes.Schema({
     email : String,
     password : String
-};
+});
 
+const secret = "Thisisourlittlesecret";
+userSchema.plugin(encrypt,{secret: secret,encryptedFields: ["password"]});
 const User = new mongooes.model("User",userSchema);
 
 app.get("/",function(req,res){
