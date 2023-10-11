@@ -43,8 +43,8 @@ passport.serializeUser(function (user, done) {
     done(null,user.id);
 });
 
-passport.deserializeUser(async function (id, done) {
-    await User.findById(id).then(function(user){
+passport.deserializeUser(function (id, done) {
+    User.findById(id).then(function(user){
         done(err,user);
     }).catch((err)=>{
         console.log(err);
@@ -93,9 +93,9 @@ app.get("/logout", function (req, res) {
     res.redirect("/");
 })
 
-app.get("/secrets", function (req, res) {
+app.get("/secrets", async function (req, res) {
     if (req.isAuthenticated()) {
-        User.find({"secret":{$ne: null}}).then((foundUsers)=>{
+        await User.find({"secret":{$ne: null}}).then((foundUsers)=>{
             if(foundUsers){
                 res.render("secrets",{usersWithSecrets: foundUsers})
             } else {
@@ -118,11 +118,11 @@ app.get("/submit",function(req,res){
     }
 })
 
-app.post("/submit",function(req,res){
+app.post("/submit",async function(req,res){
     const submittedSecret = req.body.secret;
 
     // in cookies
-    User.findById(req.user.id).then((userData)=>{
+    await User.findById(req.user.id).then((userData)=>{
         userData.secret = submittedSecret;
         userData.save().then(()=>{
             res.redirect("/secrets");
