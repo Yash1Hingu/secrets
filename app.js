@@ -26,7 +26,7 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-mongooes.connect("mongodb://127.0.0.1:27017/userDB");
+mongooes.connect(process.env.URL);
 const userSchema = new mongooes.Schema({
     email: String,
     password: String,
@@ -163,6 +163,6 @@ app.post("/login", function (req, res) {
     })
 });
 
-app.listen(3000, function () {
+app.listen(process.env.PORT || 3000, function () {
     console.log("Server is Listen at 3000 port");
 })
